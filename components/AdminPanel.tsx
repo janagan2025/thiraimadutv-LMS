@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { LeaveRecord } from '../types';
-import { LEAVE_TYPES, INFORM_METHODS } from '../constants';
-import { addTeacherToSheet, saveLeaveRecord, deleteLeaveRecord } from '../services/api';
+import { LeaveRecord } from '../types.ts';
+import { LEAVE_TYPES, INFORM_METHODS } from '../constants.ts';
+import { addTeacherToSheet, saveLeaveRecord, deleteLeaveRecord } from '../services/api.ts';
 
 interface AdminPanelProps {
   teachers: string[];
@@ -30,7 +30,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
     if (success) {
       alert('ஆசிரியர் வெற்றிகரமாக சேர்க்கப்பட்டார்!');
       setNewTeacherName('');
-      onRefresh(); // Re-fetch to get updated list
+      onRefresh(); 
     } else {
       alert('ஆசிரியர் சேர்ப்பதில் தவறு ஏற்பட்டது.');
     }
@@ -58,7 +58,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
     const success = await saveLeaveRecord(record);
     if (success) {
       alert('விடுப்பு வெற்றிகரமாக பதிவு செய்யப்பட்டது!');
-      // Reset form (keep teacher selected)
       setStartDate('');
       setEndDate('');
       setDays('1');
@@ -82,16 +81,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
     }
   }
 
-  // Reverse history for display (newest first)
-  // We map original index to allow deletion
   const displayHistory = history.map((item, idx) => ({ item, originalIndex: idx })).reverse();
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Left Column: Teacher Mgmt & History */}
       <div className="lg:col-span-1 space-y-6">
-        
-        {/* Add Teacher Card */}
         <div className="bg-white p-6 rounded-lg shadow border border-gray-100">
           <h3 className="text-lg font-bold text-slate-800 mb-4">புதிய ஆசிரியர் சேர்த்தல்</h3>
           <div className="flex gap-2">
@@ -112,7 +106,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
           </div>
         </div>
 
-        {/* History List */}
         <div className="bg-white rounded-lg shadow border border-gray-100 flex flex-col h-[600px]">
           <div className="p-4 border-b bg-gray-50">
             <h3 className="text-lg font-bold text-slate-800">சமீபத்திய விடுப்பு பதிவுகள்</h3>
@@ -152,7 +145,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
         </div>
       </div>
 
-      {/* Right Column: Leave Entry Form */}
       <div className="lg:col-span-2">
         <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md border border-gray-100 sticky top-24">
           <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -160,8 +152,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
           </h3>
           
           <form onSubmit={handleLeaveSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Teacher Selection */}
             <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-gray-700 mb-1">ஆசிரியர் பெயர்</label>
               <select
@@ -176,7 +166,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               </select>
             </div>
 
-            {/* Leave Type */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">விடுப்பு வகை</label>
               <select
@@ -188,7 +177,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               </select>
             </div>
 
-            {/* Inform Method */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">அறிவித்த விதம்</label>
               <select
@@ -200,7 +188,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               </select>
             </div>
 
-            {/* Apply Date */}
             <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-gray-700 mb-1">விண்ணப்பிக்கும் திகதி (Apply Date)</label>
               <input
@@ -211,7 +198,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               />
             </div>
 
-            {/* Dates Row */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">ஆரம்ப திகதி (Start)</label>
               <input
@@ -231,7 +217,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               />
             </div>
 
-            {/* Days Count */}
             <div className="md:col-span-2 bg-yellow-50 p-4 rounded-md border border-yellow-200">
               <label className="block text-sm font-bold text-gray-800 mb-1">மொத்த நாட்கள்</label>
               <p className="text-xs text-gray-500 mb-2">அரை நாள் விடுப்புக்கு 0.5 என உள்ளிடவும் (Use 0.5 for half day)</p>
@@ -246,7 +231,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
               />
             </div>
 
-            {/* Submit Button */}
             <div className="md:col-span-2 pt-4">
               <button
                 type="submit"
@@ -256,7 +240,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ teachers, history, onRef
                 {isSubmitting ? 'சேமிக்கப்படுகிறது...' : 'சேமிக்கவும் (Save)'}
               </button>
             </div>
-
           </form>
         </div>
       </div>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Navbar } from './components/Navbar';
-import { Dashboard } from './components/Dashboard';
-import { AdminPanel } from './components/AdminPanel';
-import { AdminLogin } from './components/AdminLogin';
-import { fetchAllData } from './services/api';
-import { AppData, LeaveRecord, TeacherSummary } from './types';
+import { Navbar } from './components/Navbar.tsx';
+import { Dashboard } from './components/Dashboard.tsx';
+import { AdminPanel } from './components/AdminPanel.tsx';
+import { AdminLogin } from './components/AdminLogin.tsx';
+import { fetchAllData } from './services/api.ts';
+import { AppData, LeaveRecord, TeacherSummary } from './types.ts';
 
 // Updated Google Apps Script Code - optimized for auto-discovery
 const UPDATED_APPS_SCRIPT_CODE = `
@@ -90,9 +90,6 @@ function doPost(e) {
     let sheet = ss.getSheetByName("LeaveRecords");
     if(!sheet) sheet = ss.insertSheet("LeaveRecords");
     
-    // Auto-add teacher to Teachers sheet if not exists (Optional but good for consistency)
-    // For performance, we skip checking here and rely on doGet merging.
-    
     sheet.appendRow([
       requestData.name, 
       requestData.type, 
@@ -133,31 +130,21 @@ function App() {
       let fetchedTeachers: string[] = [];
       let fetchedHistory: LeaveRecord[] = [];
 
-      // Case 1: New Script Structure
       if (response && typeof response === 'object' && !Array.isArray(response) && response.teachers) {
         fetchedTeachers = Array.isArray(response.teachers) ? response.teachers : [];
         fetchedHistory = Array.isArray(response.history) ? response.history : [];
-      } 
-      // Case 2: Legacy Fallback
-      else if (Array.isArray(response)) {
-        console.warn("Legacy API response detected.");
+      } else if (Array.isArray(response)) {
         fetchedTeachers = response;
         fetchedHistory = []; 
         setShowScriptInfo(true);
       } 
 
-      // CLIENT-SIDE FIX: Merge teachers from history if not in explicit list
-      // This ensures that if the "Teachers" sheet is empty but "LeaveRecords" has data, we still show the teachers.
       const teachersFromHistory = Array.from(new Set(fetchedHistory.map(h => h.name)));
-      
-      // Combine and unique
       const mergedTeachers = Array.from(new Set([...fetchedTeachers, ...teachersFromHistory])).sort();
 
-      // Update State
       setTeachers(mergedTeachers);
       setLeaveHistory(fetchedHistory);
 
-      // Calculate Summaries based on MERGED teachers list
       const calcSummaries: TeacherSummary[] = mergedTeachers.map(name => {
         const teacherLeaves = fetchedHistory.filter(h => h.name === name);
         
